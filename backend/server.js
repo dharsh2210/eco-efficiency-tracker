@@ -6,7 +6,10 @@ const connectDB = require('./config/db');
 const app = express();
 connectDB().catch(err => { console.error('DB connection failed:', err); process.exit(1); });
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
+app.use(cors({
+  origin: 'https://eco-efficiency-tracker-2.onrender.com',
+  credentials: true
+}));
 app.use(express.json());
 
 app.use('/api/auth',    require('./routes/auth'));
