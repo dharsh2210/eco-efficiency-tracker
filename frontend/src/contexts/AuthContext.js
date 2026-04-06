@@ -13,16 +13,15 @@ export const AuthProvider = ({ children }) => {
     api.get('/auth/me').then(r => setUser(r.data)).catch(() => localStorage.removeItem('eco_token')).finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (email, password) => {
-    const r = await api.post('/auth/login', { email, password });
-    localStorage.setItem('eco_token', r.data.token);
-    setUser(r.data.user);
-    return r.data.user;
-  }, []);
-
-  const logout = useCallback(() => { localStorage.removeItem('eco_token'); setUser(null); }, []);
-
-  return <Ctx.Provider value={{ user, loading, login, logout }}>{children}</Ctx.Provider>;
+  const login = async (email, password) => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Login failed");
+  setUser(data.user);
 };
 
 export const useAuth = () => {
