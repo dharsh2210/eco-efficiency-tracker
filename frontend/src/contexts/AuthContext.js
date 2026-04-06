@@ -26,22 +26,19 @@ export const AuthProvider = ({ children }) => {
   }, [API_URL]);
 
   // Login function
-  const login = async (email, password) => {
-    const res = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || "Login failed");
-
-    // Save token to localStorage for future requests
-    if (data.token) localStorage.setItem('eco_token', data.token);
-
-    setUser(data.user);
-  };
-
+ const login = async (email, password) => {
+  const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Login failed");
+  
+  setUser(data.user); // store user in context
+  localStorage.setItem('eco_token', data.token); // store token if backend gives one
+};
   // Logout function
   const logout = () => {
     localStorage.removeItem('eco_token');
